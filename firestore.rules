@@ -1,0 +1,431 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string &&
+             id.size() > 0 &&
+             id.size() <= 128 &&
+             id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidLeaderboardEntry(data, userId) {
+      return data.userId is string &&
+             data.userId == userId &&
+             data.userId == request.auth.uid &&
+             data.userId.size() > 0 &&
+             data.userId.size() <= 128 &&
+             data.studentName is string &&
+             data.studentName.size() >= 2 &&
+             data.studentName.size() <= 50 &&
+             data.course is string &&
+             data.course.size() >= 1 &&
+             data.course.size() <= 30 &&
+             data.school is string &&
+             data.school.size() >= 2 &&
+             data.school.size() <= 80 &&
+             data.bestScore is int &&
+             data.bestScore >= 0 &&
+             data.bestScore <= 10000000 &&
+             data.bestLevel is int &&
+             data.bestLevel >= 1 &&
+             data.bestLevel <= 999 &&
+             data.linesCleared is int &&
+             data.linesCleared >= 0 &&
+             data.linesCleared <= 100000 &&
+             data.createdAt is timestamp &&
+             data.createdAt <= request.time &&
+             data.updatedAt is timestamp &&
+             data.updatedAt <= request.time;
+    }
+
+    function isValidMemberUids(uids) {
+      return uids is list &&
+             uids.size() >= 1 &&
+             uids.size() <= 2 &&
+             uids[0] is string &&
+             uids[0].size() > 0 &&
+             uids[0].size() <= 128 &&
+             (uids.size() == 1 || (
+               uids[1] is string &&
+               uids[1].size() > 0 &&
+               uids[1].size() <= 128 &&
+               uids[1] != uids[0]
+             ));
+    }
+
+    function isValidVersusMatch(data) {
+      return data.hostUserId is string &&
+             data.hostUserId.size() > 0 &&
+             data.hostUserId.size() <= 128 &&
+             data.hostName is string &&
+             data.hostName.size() >= 2 &&
+             data.hostName.size() <= 50 &&
+             (!('guestUserId' in data) || (
+               data.guestUserId is string &&
+               data.guestUserId.size() > 0 &&
+               data.guestUserId.size() <= 128 &&
+               data.guestUserId != data.hostUserId
+             )) &&
+             (!('guestName' in data) || (
+               data.guestName is string &&
+               data.guestName.size() >= 2 &&
+               data.guestName.size() <= 50
+             )) &&
+             isValidMemberUids(data.memberUids) &&
+             data.memberUids[0] == data.hostUserId &&
+             data.status in ['waiting', 'active', 'finished', 'cancelled'] &&
+             data.currentRound is int &&
+             data.currentRound >= 1 &&
+             data.currentRound <= 5 &&
+             data.totalRounds == 5 &&
+             data.hostWins is int &&
+             data.hostWins >= 0 &&
+             data.hostWins <= 5 &&
+             data.guestWins is int &&
+             data.guestWins >= 0 &&
+             data.guestWins <= 5 &&
+             data.roundSeed is int &&
+             data.roundSeed >= 1 &&
+             data.targetArea is int &&
+             data.targetArea >= 4 &&
+             data.targetArea <= 144 &&
+             data.targetWidth is int &&
+             data.targetWidth >= 1 &&
+             data.targetWidth <= 12 &&
+             data.targetHeight is int &&
+             data.targetHeight >= 1 &&
+             data.targetHeight <= 12 &&
+             (data.targetWidth * data.targetHeight == data.targetArea) &&
+             (!('lastRoundWinnerUid' in data) || data.lastRoundWinnerUid in data.memberUids) &&
+             (!('lastRoundWinnerName' in data) || (
+               data.lastRoundWinnerName is string &&
+               data.lastRoundWinnerName.size() >= 2 &&
+               data.lastRoundWinnerName.size() <= 50
+             )) &&
+             (!('lastRoundSolveMs' in data) || (
+               data.lastRoundSolveMs is int &&
+               data.lastRoundSolveMs >= 0 &&
+               data.lastRoundSolveMs <= 3600000
+             )) &&
+             (!('winnerUserId' in data) || data.winnerUserId in data.memberUids) &&
+             (!('winnerName' in data) || (
+               data.winnerName is string &&
+               data.winnerName.size() >= 2 &&
+               data.winnerName.size() <= 50
+             )) &&
+             data.createdAt is timestamp &&
+             data.createdAt <= request.time &&
+             data.updatedAt is timestamp &&
+             data.updatedAt <= request.time;
+    }
+
+    function isJoinVersusMatchAction(res, req) {
+      return res.status == 'waiting' &&
+             request.auth.uid != res.hostUserId &&
+             req.status == 'active' &&
+             'guestUserId' in req &&
+             'guestName' in req &&
+             req.guestUserId == request.auth.uid &&
+             req.memberUids.size() == 2 &&
+             req.memberUids[0] == res.hostUserId &&
+             req.memberUids[1] == request.auth.uid &&
+             req.diff(res).affectedKeys().hasOnly([
+               'guestUserId',
+               'guestName',
+               'memberUids',
+               'status',
+               'updatedAt'
+             ]);
+    }
+
+    function isSubmitVersusRoundAction(matchId, res, req) {
+      let hostWon = req.hostWins == res.hostWins + 1 &&
+                    req.guestWins == res.guestWins &&
+                    req.lastRoundWinnerUid == res.hostUserId;
+      let guestWon = req.guestWins == res.guestWins + 1 &&
+                     req.hostWins == res.hostWins &&
+                     req.lastRoundWinnerUid == res.guestUserId;
+      let finishesMatch = req.status == 'finished' &&
+                          'winnerUserId' in req &&
+                          'winnerName' in req &&
+                          req.currentRound == res.currentRound &&
+                          (req.hostWins >= 3 || req.guestWins >= 3 || res.currentRound == res.totalRounds);
+      let advancesRound = req.status == 'active' &&
+                          !('winnerUserId' in req) &&
+                          req.currentRound == res.currentRound + 1 &&
+                          res.currentRound < res.totalRounds &&
+                          req.hostWins < 3 &&
+                          req.guestWins < 3;
+      return res.status == 'active' &&
+             request.auth.uid in res.memberUids &&
+             req.lastRoundWinnerUid == request.auth.uid &&
+             (hostWon || guestWon) &&
+             (finishesMatch || advancesRound) &&
+             existsAfter(/databases/$(database)/documents/versus_matches/$(matchId)/rounds/$('round_' + string(res.currentRound))) &&
+             req.diff(res).affectedKeys().hasOnly([
+               'currentRound',
+               'hostWins',
+               'guestWins',
+               'status',
+               'targetArea',
+               'targetWidth',
+               'targetHeight',
+               'lastRoundWinnerUid',
+               'lastRoundWinnerName',
+               'lastRoundSolveMs',
+               'winnerUserId',
+               'winnerName',
+               'updatedAt'
+             ]);
+    }
+
+    function isCancelOrForfeitVersusAction(res, req) {
+      let cancelWaiting = res.status == 'waiting' &&
+                          request.auth.uid == res.hostUserId &&
+                          req.status == 'cancelled' &&
+                          req.diff(res).affectedKeys().hasOnly(['status', 'updatedAt']);
+      let forfeitActive = res.status == 'active' &&
+                          request.auth.uid in res.memberUids &&
+                          req.status == 'finished' &&
+                          'winnerUserId' in req &&
+                          'winnerName' in req &&
+                          req.winnerUserId != request.auth.uid &&
+                          req.winnerUserId in res.memberUids &&
+                          req.diff(res).affectedKeys().hasOnly([
+                            'status',
+                            'winnerUserId',
+                            'winnerName',
+                            'updatedAt'
+                          ]);
+      return cancelWaiting || forfeitActive;
+    }
+
+    function isValidVersusRoundResult(data, matchId) {
+      return data.matchId is string &&
+             data.matchId == matchId &&
+             data.roundNumber is int &&
+             data.roundNumber >= 1 &&
+             data.roundNumber <= 5 &&
+             data.targetArea is int &&
+             data.targetArea >= 4 &&
+             data.targetArea <= 144 &&
+             data.targetWidth is int &&
+             data.targetWidth >= 1 &&
+             data.targetWidth <= 12 &&
+             data.targetHeight is int &&
+             data.targetHeight >= 1 &&
+             data.targetHeight <= 12 &&
+             (data.targetWidth * data.targetHeight == data.targetArea) &&
+             data.winnerUserId is string &&
+             data.winnerUserId == request.auth.uid &&
+             data.winnerName is string &&
+             data.winnerName.size() >= 2 &&
+             data.winnerName.size() <= 50 &&
+             data.solveTimeMs is int &&
+             data.solveTimeMs >= 0 &&
+             data.solveTimeMs <= 3600000 &&
+             data.attempts is int &&
+             data.attempts >= 1 &&
+             data.attempts <= 500 &&
+             isValidMemberUids(data.memberUids) &&
+             data.memberUids.size() == 2 &&
+             request.auth.uid in data.memberUids &&
+             data.createdAt is timestamp &&
+             data.createdAt <= request.time;
+    }
+
+    match /leaderboard/{userId} {
+      allow get: if isSignedIn() &&
+                    isValidId(userId) &&
+                    (isOwner(userId) || existing().bestScore > 0);
+
+      allow list: if isSignedIn() &&
+                     existing().bestScore > 0;
+
+      allow create: if isOwner(userId) &&
+                       isValidId(userId) &&
+                       incoming().keys().hasAll([
+                         'userId',
+                         'studentName',
+                         'course',
+                         'school',
+                         'bestScore',
+                         'bestLevel',
+                         'linesCleared',
+                         'createdAt',
+                         'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'userId',
+                         'studentName',
+                         'course',
+                         'school',
+                         'bestScore',
+                         'bestLevel',
+                         'linesCleared',
+                         'createdAt',
+                         'updatedAt'
+                       ]) &&
+                       isValidLeaderboardEntry(incoming(), userId);
+
+      allow update: if isSignedIn() &&
+                       isValidId(userId) &&
+                       isValidLeaderboardEntry(incoming(), userId) &&
+                       isOwner(userId) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().bestScore >= existing().bestScore &&
+                       (
+                         incoming().diff(existing()).affectedKeys().hasOnly([
+                           'studentName',
+                           'course',
+                           'school',
+                           'bestScore',
+                           'bestLevel',
+                           'linesCleared',
+                           'updatedAt'
+                         ])
+                       );
+
+      allow delete: if isOwner(userId) && isValidId(userId);
+    }
+
+    match /versus_matches/{matchId} {
+      allow get: if isSignedIn() &&
+                    isValidId(matchId) &&
+                    (existing().status == 'waiting' || request.auth.uid in existing().memberUids);
+
+      allow list: if isSignedIn() &&
+                     (existing().status == 'waiting' || request.auth.uid in existing().memberUids);
+
+      allow create: if isSignedIn() &&
+                       isValidId(matchId) &&
+                       matchId.size() >= 4 &&
+                       matchId.size() <= 24 &&
+                       incoming().keys().hasAll([
+                         'hostUserId',
+                         'hostName',
+                         'memberUids',
+                         'status',
+                         'currentRound',
+                         'totalRounds',
+                         'hostWins',
+                         'guestWins',
+                         'roundSeed',
+                         'targetArea',
+                         'targetWidth',
+                         'targetHeight',
+                         'createdAt',
+                         'updatedAt'
+                       ]) &&
+                       incoming().keys().hasOnly([
+                         'hostUserId',
+                         'hostName',
+                         'memberUids',
+                         'status',
+                         'currentRound',
+                         'totalRounds',
+                         'hostWins',
+                         'guestWins',
+                         'roundSeed',
+                         'targetArea',
+                         'targetWidth',
+                         'targetHeight',
+                         'createdAt',
+                         'updatedAt'
+                       ]) &&
+                       incoming().hostUserId == request.auth.uid &&
+                       incoming().memberUids.size() == 1 &&
+                       incoming().status == 'waiting' &&
+                       incoming().currentRound == 1 &&
+                       incoming().totalRounds == 5 &&
+                       incoming().hostWins == 0 &&
+                       incoming().guestWins == 0 &&
+                       isValidVersusMatch(incoming());
+
+      allow update: if isSignedIn() &&
+                       isValidId(matchId) &&
+                       isValidVersusMatch(incoming()) &&
+                       existing().status != 'finished' &&
+                       existing().status != 'cancelled' &&
+                       (
+                         isJoinVersusMatchAction(existing(), incoming()) ||
+                         isSubmitVersusRoundAction(matchId, existing(), incoming()) ||
+                         isCancelOrForfeitVersusAction(existing(), incoming())
+                       );
+
+      allow delete: if false;
+
+      match /rounds/{roundId} {
+        allow get: if isSignedIn() &&
+                      isValidId(matchId) &&
+                      isValidId(roundId) &&
+                      request.auth.uid in existing().memberUids;
+
+        allow list: if isSignedIn() &&
+                       request.auth.uid in existing().memberUids;
+
+        allow create: if isSignedIn() &&
+                         isValidId(matchId) &&
+                         isValidId(roundId) &&
+                         roundId.matches('^round_[1-5]$') &&
+                         incoming().keys().hasAll([
+                           'matchId',
+                           'roundNumber',
+                           'targetArea',
+                           'targetWidth',
+                           'targetHeight',
+                           'winnerUserId',
+                           'winnerName',
+                           'solveTimeMs',
+                           'attempts',
+                           'memberUids',
+                           'createdAt'
+                         ]) &&
+                         incoming().keys().hasOnly([
+                           'matchId',
+                           'roundNumber',
+                           'targetArea',
+                           'targetWidth',
+                           'targetHeight',
+                           'winnerUserId',
+                           'winnerName',
+                           'solveTimeMs',
+                           'attempts',
+                           'memberUids',
+                           'createdAt'
+                         ]) &&
+                         isValidVersusRoundResult(incoming(), matchId) &&
+                         get(/databases/$(database)/documents/versus_matches/$(matchId)).data.status == 'active' &&
+                         request.auth.uid in get(/databases/$(database)/documents/versus_matches/$(matchId)).data.memberUids &&
+                         incoming().memberUids == get(/databases/$(database)/documents/versus_matches/$(matchId)).data.memberUids &&
+                         incoming().roundNumber == get(/databases/$(database)/documents/versus_matches/$(matchId)).data.currentRound &&
+                         roundId == ('round_' + string(incoming().roundNumber)) &&
+                         getAfter(/databases/$(database)/documents/versus_matches/$(matchId)).data.lastRoundWinnerUid == request.auth.uid;
+
+        allow update, delete: if false;
+      }
+    }
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "entities": {
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "Public online student ranking entry storing a student's name, course, school, and highest MultiDrop score.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Authenticated Firebase user UID owning this student entry."
+        },
+        "studentName": {
+          "type": "string",
+          "description": "Student display name shown on the online leaderboard (2-50 chars)."
+        },
+        "course": {
+          "type": "string",
+          "description": "Student course or grade level (1-30 chars, e.g. 6° A)."
+        },
+        "school": {
+          "type": "string",
+          "description": "Student school or institution name (2-80 chars)."
+        },
+        "bestScore": {
+          "type": "integer",
+          "description": "Highest score achieved by the student (0-10000000)."
+        },
+        "bestLevel": {
+          "type": "integer",
+          "description": "Level reached in the student's best run (1-999)."
+        },
+        "linesCleared": {
+          "type": "integer",
+          "description": "Rows cleared in the student's best run (0-100000)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the entry was created via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the entry was last updated via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "userId",
+        "studentName",
+        "course",
+        "school",
+        "bestScore",
+        "bestLevel",
+        "linesCleared",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "VersusMatch": {
+      "title": "VersusMatch",
+      "description": "Real-time 2-player versus match room where two players race to solve the same multiplicative target first across best-of-5 rounds.",
+      "type": "object",
+      "properties": {
+        "hostUserId": {
+          "type": "string",
+          "description": "UID of the player who created the versus room."
+        },
+        "hostName": {
+          "type": "string",
+          "description": "Display name of the host player (2-50 chars)."
+        },
+        "guestUserId": {
+          "type": "string",
+          "description": "UID of the second player once joined."
+        },
+        "guestName": {
+          "type": "string",
+          "description": "Display name of the guest player (2-50 chars)."
+        },
+        "memberUids": {
+          "type": "array",
+          "description": "Participant UIDs (1 while waiting, 2 when active)."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["waiting", "active", "finished", "cancelled"],
+          "description": "Match lifecycle status."
+        },
+        "currentRound": {
+          "type": "integer",
+          "description": "Current round number (1-5)."
+        },
+        "totalRounds": {
+          "type": "integer",
+          "description": "Maximum number of rounds in the match (5)."
+        },
+        "hostWins": {
+          "type": "integer",
+          "description": "Rounds won by the host player (0-5)."
+        },
+        "guestWins": {
+          "type": "integer",
+          "description": "Rounds won by the guest player (0-5)."
+        },
+        "roundSeed": {
+          "type": "integer",
+          "description": "Shared deterministic seed for round board layouts."
+        },
+        "targetArea": {
+          "type": "integer",
+          "description": "Shared multiplicative product target for the current round."
+        },
+        "targetWidth": {
+          "type": "integer",
+          "description": "Target rectangle width factor for the current round."
+        },
+        "targetHeight": {
+          "type": "integer",
+          "description": "Target rectangle height factor for the current round."
+        },
+        "lastRoundWinnerUid": {
+          "type": "string",
+          "description": "UID of the player who solved the most recent completed round first."
+        },
+        "lastRoundWinnerName": {
+          "type": "string",
+          "description": "Display name of the most recent round winner."
+        },
+        "lastRoundSolveMs": {
+          "type": "integer",
+          "description": "Solve duration in milliseconds for the most recent round."
+        },
+        "winnerUserId": {
+          "type": "string",
+          "description": "UID of the overall match winner once finished."
+        },
+        "winnerName": {
+          "type": "string",
+          "description": "Display name of the overall match winner once finished."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the match was created via FieldValue.serverTimestamp()."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the match was last updated via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "hostUserId",
+        "hostName",
+        "memberUids",
+        "status",
+        "currentRound",
+        "totalRounds",
+        "hostWins",
+        "guestWins",
+        "roundSeed",
+        "targetArea",
+        "targetWidth",
+        "targetHeight",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "VersusRoundResult": {
+      "title": "VersusRoundResult",
+      "description": "Immutable record of a solved versus round written atomically when the first player completes the multiplicative target.",
+      "type": "object",
+      "properties": {
+        "matchId": {
+          "type": "string",
+          "description": "Parent match document ID."
+        },
+        "roundNumber": {
+          "type": "integer",
+          "description": "Round index (1-5)."
+        },
+        "targetArea": {
+          "type": "integer",
+          "description": "Product target solved in this round."
+        },
+        "targetWidth": {
+          "type": "integer",
+          "description": "Target width factor solved."
+        },
+        "targetHeight": {
+          "type": "integer",
+          "description": "Target height factor solved."
+        },
+        "winnerUserId": {
+          "type": "string",
+          "description": "UID of the player who solved the round first."
+        },
+        "winnerName": {
+          "type": "string",
+          "description": "Display name of the round winner."
+        },
+        "solveTimeMs": {
+          "type": "integer",
+          "description": "Time taken by the winner in milliseconds."
+        },
+        "attempts": {
+          "type": "integer",
+          "description": "Placement attempts made by the winner in this round."
+        },
+        "memberUids": {
+          "type": "array",
+          "description": "Denormalized participant UIDs for subcollection read authorization."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the round result was recorded via FieldValue.serverTimestamp()."
+        }
+      },
+      "required": [
+        "matchId",
+        "roundNumber",
+        "targetArea",
+        "targetWidth",
+        "targetHeight",
+        "winnerUserId",
+        "winnerName",
+        "solveTimeMs",
+        "attempts",
+        "memberUids",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/leaderboard/{userId}": {
+      "schema": {
+        "$ref": "#/entities/LeaderboardEntry"
+      },
+      "description": "Online ranking of students by their highest score, showing name, course, and school."
+    },
+    "/versus_matches/{matchId}": {
+      "schema": {
+        "$ref": "#/entities/VersusMatch"
+      },
+      "description": "Real-time 2-player versus rooms and live match scoreboard state."
+    },
+    "/versus_matches/{matchId}/rounds/{roundId}": {
+      "schema": {
+        "$ref": "#/entities/VersusRoundResult"
+      },
+      "description": "Per-round multiplicative race results recorded atomically via Firestore transactions."
+    }
+  }
+}

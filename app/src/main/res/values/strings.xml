@@ -1,0 +1,172 @@
+<resources>
+    <string name="app_name">MultiDrop</string>
+    <string name="app_tagline">Refactoriza rectángulos por sus factores y completa filas al estilo Factris</string>
+
+    <!-- Navegación y acciones -->
+    <string name="action_play">Jugar ahora</string>
+    <string name="action_tables_guide">Factores</string>
+    <string name="action_back">Volver</string>
+    <string name="action_pause">Pausar</string>
+    <string name="action_resume">Continuar</string>
+    <string name="action_restart">Reiniciar</string>
+    <string name="action_exit_menu">Cambiar modo</string>
+    <string name="action_practice_table">Practicar esta tabla</string>
+
+    <!-- Modos de juego -->
+    <string name="section_game_mode">Modo de juego</string>
+    <string name="mode_arcade">Factris Clásico</string>
+    <string name="mode_arcade_desc">Velocidad progresiva y áreas mayores cada nivel</string>
+    <string name="mode_practice">Modo Práctica</string>
+    <string name="mode_practice_desc">Sin gravedad por reloj: experimenta con factores</string>
+
+    <!-- Selector de tabla -->
+    <string name="section_table_selector">Enfoque numérico</string>
+    <string name="table_all">Clásico (Todas)</string>
+
+    <!-- Ajustes -->
+    <string name="label_include_primes">Incluir números primos</string>
+    <string name="desc_include_primes">Bloques de 2, 3, 5, 7 y 11 para mayor reto</string>
+    <string name="label_factor_pills">Barra de factores</string>
+    <string name="desc_factor_pills">Muestra y permite tocar todas las parejas (ej. 4×3)</string>
+    <string name="label_haptics">Vibración táctil</string>
+    <string name="desc_haptics">Respuesta al mover, refactorizar y encajar</string>
+    <string name="label_sound_effects">Efectos de sonido</string>
+    <string name="desc_sound_effects">Sonidos al mover, rotar, caer y completar filas</string>
+    <string name="label_best_score">Récord local</string>
+
+    <!-- Reglas rápidas -->
+    <string name="rules_title">¿Cómo se juega?</string>
+    <string name="rules_step_1">1. Cada bloque que cae es un rectángulo con un área (ej. 12).</string>
+    <string name="rules_step_2">2. Pulsa Refactorizar (↑) para cambiar sus factores: 12×1, 6×2, 4×3, 3×4…</string>
+    <string name="rules_step_3">3. Completa varias filas a la vez para multiplicar tus puntos (10, 20, 40, 80…).</string>
+
+    <!-- HUD del juego -->
+    <string name="hud_area">ÁREA ACTUAL</string>
+    <string name="hud_prime_badge">PRIMO</string>
+    <string name="hud_score">PUNTOS</string>
+    <string name="hud_lines">FILAS</string>
+    <string name="hud_level">NIVEL</string>
+    <string name="hud_speed_relaxed">Libre</string>
+    <string name="hud_next_piece">SIGUIENTE</string>
+
+    <!-- Controles táctiles -->
+    <string name="cd_move_left">Mover a la izquierda</string>
+    <string name="cd_move_right">Mover a la derecha</string>
+    <string name="cd_refactor">Refactorizar dimensiones</string>
+    <string name="cd_soft_drop">Bajar más rápido</string>
+    <string name="cd_hard_drop">Caída instantánea</string>
+
+    <!-- Diálogos de pausa y fin de partida -->
+    <string name="paused_title">Juego en pausa</string>
+    <string name="paused_subtitle">Reorganiza tu estrategia o ajusta las ayudas</string>
+    <string name="game_over_title">Fin de partida</string>
+    <string name="game_over_subtitle">Los rectángulos alcanzaron la parte superior</string>
+    <string name="new_record_badge">¡NUEVO RÉCORD!</string>
+    <string name="stat_final_score">Puntuación final</string>
+    <string name="stat_level_reached">Nivel alcanzado</string>
+    <string name="stat_lines_cleared">Filas completadas</string>
+    <string name="stat_best_multi">Mejor combo de filas</string>
+
+    <!-- Guía de factores / tablas -->
+    <string name="tables_guide_title">Factores y Tablas</string>
+    <string name="tables_guide_subtitle">Explora los múltiplos y practica una tabla concreta</string>
+
+    <!-- Autenticación con Google -->
+    <string name="auth_title">MultiDrop en línea</string>
+    <string name="auth_subtitle">Inicia sesión con tu identificador de Google para guardar tu récord y competir en el ranking de estudiantes.</string>
+    <string name="action_sign_in_google_id">Continuar con ID de Google</string>
+    <string name="auth_google_id_hint">Acceso rápido con tu cuenta de Google en un toque</string>
+    <string name="action_sign_in_google">Iniciar sesión con Google</string>
+    <string name="action_sign_out">Cerrar sesión</string>
+    <string name="auth_note_student">Solo mostraremos tu nombre de estudiante, curso y escuela en el ranking.</string>
+
+    <!-- Perfil de estudiante y ranking -->
+    <string name="action_leaderboard">Ranking</string>
+    <string name="action_view_leaderboard">Ver ranking en línea</string>
+    <string name="action_edit_student_profile">Editar perfil</string>
+    <string name="action_complete_profile">Completar perfil</string>
+    <string name="action_publish_score">Publicar puntaje en ranking</string>
+    <string name="student_profile_title">Datos del estudiante</string>
+    <string name="student_profile_subtitle">Estos datos aparecerán junto a tu mejor puntaje en el ranking en línea.</string>
+    <string name="label_student_name">Nombre del estudiante</string>
+    <string name="placeholder_student_name">Ej. Sofía Martínez</string>
+    <string name="label_student_course">Curso</string>
+    <string name="placeholder_student_course">Ej. 6° A</string>
+    <string name="label_student_school">Escuela</string>
+    <string name="placeholder_student_school">Ej. Escuela República de Chile</string>
+    <string name="action_save_profile">Guardar datos</string>
+    <string name="action_cancel">Cancelar</string>
+    <string name="error_student_name_length">Ingresa un nombre de entre 2 y 50 caracteres.</string>
+    <string name="error_student_course_length">Ingresa tu curso (entre 1 y 30 caracteres).</string>
+    <string name="error_student_school_length">Ingresa tu escuela (entre 2 y 80 caracteres).</string>
+
+    <string name="leaderboard_title">Ranking en línea</string>
+    <string name="leaderboard_subtitle">Mejores puntajes de estudiantes</string>
+    <string name="leaderboard_filter_all">Todas las escuelas</string>
+    <string name="leaderboard_filter_my_school">Mi escuela</string>
+    <string name="leaderboard_search_hint">Buscar por nombre, curso o escuela</string>
+    <string name="leaderboard_empty_title">Aún no hay puntajes publicados</string>
+    <string name="leaderboard_empty_subtitle">Completa tu perfil de estudiante y juega una partida para inaugurar el ranking.</string>
+    <string name="leaderboard_you_badge">Tú</string>
+    <string name="leaderboard_your_position">Tu posición</string>
+    <string name="leaderboard_unranked">Sin puntaje publicado</string>
+    <string name="leaderboard_prompt_profile">Configura tu nombre, curso y escuela para publicar tu récord en línea.</string>
+    <string name="leaderboard_synced_badge">¡Puntaje sincronizado en el ranking en línea!</string>
+
+    <!-- Dificultad adaptativa -->
+    <string name="adaptive_tier_supportive">Refuerzo</string>
+    <string name="adaptive_tier_balanced">Equilibrado</string>
+    <string name="adaptive_tier_challenge">Desafío</string>
+    <string name="hud_accuracy_format">Acierto %1$d%%</string>
+    <string name="hud_factors_format">Factores %1$s</string>
+    <string name="stat_accuracy">Acierto en productos</string>
+
+    <!-- Tutorial interactivo -->
+    <string name="tutorial_badge_format">TUTORIAL · %1$d/%2$d</string>
+    <string name="tutorial_skip">Saltar</string>
+    <string name="tutorial_step1_title">Iguala la altura de la pieza vecina</string>
+    <string name="tutorial_step1_desc">Abajo hay un 12 (6×2). Toca la píldora 6×2 o Refactorizar (↑) para convertir tu pieza de 4×3 en 6×2.</string>
+    <string name="tutorial_step2_title">Colócala al lado para sumar 12</string>
+    <string name="tutorial_step2_desc">Desliza o mueve a la derecha hasta la zona 6×2 junto al otro 12 (6 + 6 = 12) y déjala caer.</string>
+    <string name="tutorial_step3_title">Combina productos distintos</string>
+    <string name="tutorial_step3_desc">Hay un 8 (4×2) y un 10 (5×2). Cambia tu 6 a 3×2 y encájalo en el hueco central (4 + 3 + 5 = 12).</string>
+    <string name="tutorial_completed_title">¡Tutorial completado!</string>
+    <string name="tutorial_completed_subtitle">Ya sabes refactorizar factores y unir piezas adyacentes para completar filas de 12 columnas.</string>
+    <string name="tutorial_completed_chip_1">Refactorizar factores</string>
+    <string name="tutorial_completed_chip_2">Alinear al lado</string>
+    <string name="tutorial_completed_chip_3">Sumar 12 columnas</string>
+    <string name="tutorial_action_start_game">¡Empezar partida!</string>
+    <string name="tutorial_action_replay">Repetir tutorial</string>
+    <string name="tutorial_home_button">Tutorial interactivo</string>
+    <string name="tutorial_home_replay_button">Repetir tutorial interactivo</string>
+    <string name="tutorial_completed_badge">Completado</string>
+
+    <!-- Modo Versus en tiempo real -->
+    <string name="versus_home_title">Modo Versus 1v1</string>
+    <string name="versus_home_desc">Compite en tiempo real contra otro estudiante por el mismo objetivo multiplicativo</string>
+    <string name="versus_home_cta">Competir</string>
+    <string name="versus_screen_title">Duelo Versus 1v1</string>
+    <string name="versus_screen_subtitle">Al mejor de 5 rondas · Gana quien resuelva el producto primero</string>
+    <string name="versus_create_room_title">Crear nueva sala</string>
+    <string name="versus_create_room_desc">Genera un código único de 6 caracteres y espera a tu rival</string>
+    <string name="versus_create_room_button">Crear sala 1v1</string>
+    <string name="versus_join_code_title">Unirse con código</string>
+    <string name="versus_join_code_hint">Código de sala (ej. MD4K9P)</string>
+    <string name="versus_join_code_button">Entrar</string>
+    <string name="versus_open_rooms_title">Salas abiertas en línea</string>
+    <string name="versus_open_rooms_empty">No hay salas esperando ahora. ¡Crea una y comparte el código!</string>
+    <string name="versus_join_room_button">Unirse</string>
+    <string name="versus_waiting_title">Esperando rival…</string>
+    <string name="versus_waiting_subtitle">Comparte este código para que otro jugador se una en tiempo real</string>
+    <string name="versus_room_code_label">CÓDIGO DE SALA</string>
+    <string name="versus_cancel_room_button">Cancelar sala</string>
+    <string name="versus_round_badge_format">Ronda %1$d/%2$d</string>
+    <string name="versus_target_format">Objetivo: %1$d (%2$d×%3$d)</string>
+    <string name="versus_leave_match_button">Salir</string>
+    <string name="versus_you_won_match">¡Ganaste el duelo Versus!</string>
+    <string name="versus_opponent_won_match">Victoria de %1$s</string>
+    <string name="versus_match_cancelled">Sala cancelada</string>
+    <string name="versus_rounds_history_title">Resultados por ronda (Firestore)</string>
+    <string name="versus_back_to_lobby">Volver al lobby Versus</string>
+    <string name="versus_exit_home">Menú principal</string>
+</resources>

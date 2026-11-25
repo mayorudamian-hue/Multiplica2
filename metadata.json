@@ -1,0 +1,6 @@
+{
+  "name": "MultiDrop",
+  "description": "Juego arcade educativo de bloques que caen para dominar las tablas de multiplicar formando productos en cascada.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
