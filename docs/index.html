@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MultiDrop — Juego Educativo de Tablas y Factores</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --surface: #141b33;
+      --border: #26325b;
+      --cyan: #38e8ff;
+      --emerald: #34d399;
+      --amber: #fbbf24;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: radial-gradient(circle at top, #182347 0%, var(--bg) 65%);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 540px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      background: rgba(56, 232, 255, 0.12);
+      border: 1px solid rgba(56, 232, 255, 0.35);
+      margin-bottom: 14px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+      line-height: 1.15;
+    }
+    p {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .feat {
+      background: rgba(11, 16, 32, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .feat strong {
+      display: block;
+      color: var(--emerald);
+      margin-bottom: 4px;
+    }
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .btn {
+      display: block;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 15px 18px;
+      border-radius: 14px;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--cyan);
+      color: #07101f;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(56, 232, 255, 0.5);
+    }
+    .note {
+      margin-top: 16px;
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <span class="badge">Android · Matemáticas</span>
+    <h1>MultiDrop</h1>
+    <p>
+      Domina las tablas de multiplicar refactorizando bloques por sus factores para completar filas, competir en modo Versus 1v1 y escalar en el ranking estudiantil.
+    </p>
+
+    <div class="features">
+      <div class="feat">
+        <strong>Modo Práctica y Arcade</strong>
+        Dificultad adaptativa según tu precisión.
+      </div>
+      <div class="feat">
+        <strong>Tutorial Guiado</strong>
+        Aprende a unir productos adyacentes paso a paso.
+      </div>
+      <div class="feat">
+        <strong>Versus 1v1 y Ranking</strong>
+        Salas en tiempo real y puntajes por escuela.
+      </div>
+    </div>
+
+    <div class="actions">
+      <a id="apk-link" class="btn btn-primary" href="../releases/latest/download/MultiDrop.apk">
+        Descargar APK para Android
+      </a>
+      <a class="btn btn-secondary" href="https://ais-pre-2nc4upx6fnif5abftc4hfg-192481096482.us-east1.run.app" target="_blank" rel="noopener">
+        Probar en emulador en línea
+      </a>
+    </div>
+
+    <p class="note">
+      En Android, abre el archivo descargado y permite instalar desde esta fuente para jugar.
+    </p>
+  </main>
+
+  <script>
+    (function () {
+      var host = window.location.hostname;
+      if (host.endsWith('.github.io')) {
+        var owner = host.split('.')[0];
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        var repo = parts[0] || '';
+        var releaseUrl = repo
+          ? 'https://github.com/' + owner + '/' + repo + '/releases/latest/download/MultiDrop.apk'
+          : 'https://github.com/' + owner + '/releases/latest/download/MultiDrop.apk';
+        document.getElementById('apk-link').href = releaseUrl;
+      }
+    })();
+  </script>
+</body>
+</html>
